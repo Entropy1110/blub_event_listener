@@ -26,13 +26,13 @@ contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 
 def handle_event(event):
     """이벤트 데이터를 포맷팅하여 출력"""
-    print("\n🔔 New VerifyLog Event")
-    print(f"📌 Block: {event['blockNumber']}")
-    print(f"🔄 _pA: {event['args']['_pA']}")
-    print(f"🔄 _pB: {event['args']['_pB']}")
-    print(f"🔄 _pC: {event['args']['_pC']}")
-    print(f"📡 _pubSignals: {event['args']['_pubSignals']}")
-    print(f"🔒 _encryptedCmd (hex): {event['args']['_encryptedCmd'].hex()}")
+    print("\n New VerifyLog Event")
+    print(f" Block: {event['blockNumber']}")
+    print(f" _pA: {event['args']['_pA']}")
+    print(f" _pB: {event['args']['_pB']}")
+    print(f" _pC: {event['args']['_pC']}")
+    print(f" _pubSignals: {event['args']['_pubSignals']}")
+    print(f" _encryptedCmd (hex): {event['args']['_encryptedCmd'].hex()}")
     print("-" * 50)
 
 def get_latest_block():
@@ -40,20 +40,20 @@ def get_latest_block():
     try:
         return web3.eth.block_number
     except Exception as e:
-        print(f"⚠️ Failed to get block number: {e}")
+        print(f"Failed to get block number: {e}")
         return None
 
 def listen_events():
     """실시간 이벤트 감지"""
-    print("🔍 Starting event listener...")
+    print("Starting event listener...")
     last_block = get_latest_block()
     
     if last_block is None:
-        print("❌ Could not fetch initial block number")
+        print("Could not fetch initial block number")
         return
 
-    print(f"⏳ Current block: {last_block}")
-    print("🚀 Ready to detect events!")
+    print(f"Current block: {last_block}")
+    print("Ready to detect events!")
 
     while True:
         try:
@@ -63,7 +63,7 @@ def listen_events():
                 continue
 
             if current_block > last_block:
-                print(f"\n🔎 Scanning blocks {last_block + 1} to {current_block}")
+                print(f"\nScanning blocks {last_block + 1} to {current_block}")
                 
                 events = contract.events.VerifyLog.get_logs(
                     fromBlock=last_block + 1,
@@ -71,11 +71,11 @@ def listen_events():
                 )
                 
                 if events:
-                    print(f"🎯 Found {len(events)} event(s)")
+                    print(f"Found {len(events)} event(s)")
                     for event in events:
                         handle_event(event)
                 else:
-                    print("⏭️ No events found")
+                    print("No events found")
 
                 last_block = current_block
             else:
@@ -84,10 +84,10 @@ def listen_events():
             time.sleep(5)  # 5초 간격으로 폴링
 
         except KeyboardInterrupt:
-            print("\n🛑 Listener stopped by user")
+            print("\nListener stopped by user")
             break
         except Exception as e:
-            print(f"\n⚠️ Error: {e}")
+            print(f"\nError: {e}")
             time.sleep(10)  # 오류 발생 시 10초 대기
 
 if __name__ == "__main__":
