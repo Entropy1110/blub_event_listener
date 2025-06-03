@@ -27,7 +27,7 @@ CONTRACT_ABI = [
 
 contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 
-def handle_event(event):
+'''def handle_event(event):
     try:
         enc_cmd_hex = event['args']['_encryptedCmd'].hex()
         decrypted = decrypt_command("0x" + enc_cmd_hex, SK_USER_SECRET)
@@ -35,6 +35,69 @@ def handle_event(event):
         print(json.dumps(decrypted, indent=2, ensure_ascii=False))
     except Exception as e:
         print(f"❌ Decryption failed: {e}")
+'''
+
+def handle_event(event):
+    try:
+        enc_cmd_hex = event['args']['_encryptedCmd'].hex()
+        decrypted = decrypt_command("0x" + enc_cmd_hex, SK_USER_SECRET)
+        print("Decrypted Command:")
+        print(json.dumps(decrypted, indent=2, ensure_ascii=False))
+
+        device_id = decrypted.get("deviceId")
+        action = decrypted.get("action")
+        value = decrypted.get("value")  
+        if device_id == 1001:
+            if action == "set_temp":
+                print(f"Living Room Thermostat >> 온도 설정 명령 (value={value})")
+            elif action == "turn_off":
+                print("Living Room Thermostat >> 전원 끄기 명령 수신됨")
+            elif action == "force_error":
+                print("Living Room Thermostat >> 강제 오류 명령 수신됨")
+            else:
+                print(f"Living Room Thermostat >> 알 수 없는 명령: {action}")
+
+        elif device_id == 1002:
+            if action == "turn_on":
+                print("Kitchen Light >> 켜기 명령 수신됨")
+            elif action == "turn_off":
+                print("Kitchen Light >> 끄기 명령 수신됨")
+            elif action == "set_brightness":
+                print(f"Kitchen Light >> 밝기 설정 명령 수신됨 (value={value})")
+            else:
+                print(f"Kitchen Light >> 알 수 없는 명령: {action}")
+
+        elif device_id == 1003:
+            if action == "lock":
+                print("Bedroom Door Lock >> 잠금 명령 수신됨")
+            elif action == "unlock":
+                print("Bedroom Door Lock >> 잠금 해제 명령 수신됨")
+            else:
+                print(f"Bedroom Door Lock >> 알 수 없는 명령: {action}")
+
+        elif device_id == 1004:
+            if action == "open":
+                print("Garage Door Opener >> 문 열기 명령 수신됨")
+            elif action == "close":
+                print("Garage Door Opener >> 문 닫기 명령 수신됨")
+            else:
+                print(f"Garage Door Opener >> 알 수 없는 명령: {action}")
+
+        elif device_id == 1005:
+            if action == "start_record":
+                print("Security Camera >> 녹화 시작 명령 수신됨")
+            elif action == "stop_record":
+                print("Security Camera >> 녹화 중지 명령 수신됨")
+            else:
+                print(f"Security Camera >> 알 수 없는 명령: {action}")
+
+        else:
+            print(f"알 수 없는 deviceId: {device_id}")
+
+    except Exception as e:
+        print(f"❌ Decryption failed: {e}")
+
+
 
 def get_latest_block():
     """최신 블록 번호 조회"""
